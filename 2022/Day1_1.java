@@ -7,7 +7,7 @@ public class Day1_1 {
     private static List<String> elfCalorieData;
 
     public static void main(String[] args) {
-        elfCalorieData = FileUtils.readLines("2022/day1_1.txt");
+        elfCalorieData = FileUtils.readLines("2022/day1.txt");
 
         Integer currentTotal = 0;
         for (String calorie : elfCalorieData) {
