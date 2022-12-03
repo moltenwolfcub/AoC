@@ -5,7 +5,7 @@ import java.util.List;
 
 import Helpers.FileUtils;
 
-public class Day1_2 {
+public class day1_2 {
     private static List<String> elfCalorieData;
     private static List<Integer> allCalorieSums;
     private static Integer topCombinedCaloriesSum;

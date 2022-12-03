@@ -1,6 +1,6 @@
 import Helpers.FileUtils;
 
-public class Day2_1 {
+public class day2_1 {
 	
 	private static int runningScore;
     public static void main(String[] args) {

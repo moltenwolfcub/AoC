@@ -2,7 +2,7 @@ import java.util.List;
 
 import Helpers.FileUtils;
 
-public class Day1_1 {
+public class day1_1 {
     private static Integer mostCalories = 0;
     private static List<String> elfCalorieData;
 

@@ -3,7 +3,7 @@ import java.util.List;
 
 import Helpers.FileUtils;
 
-public class Day3_2 {
+public class day3_2 {
 
     private static int totalPriority;
     
