@@ -23,14 +23,18 @@ public class day3_1 {
                 System.out.println("No shared Item was found.");
                 continue;
             }
-            int priority = Character.getNumericValue(sharedItem) - 9;
-            if (Character.isUpperCase(sharedItem)) {
-                priority += 26;
-            }
-            totalPriority+= priority;
+            totalPriority+= getItemPriority(sharedItem);
         }
 
         System.out.println(totalPriority);
         
+    }
+
+    private static Integer getItemPriority(Character item) {
+        int priority = Character.getNumericValue(item) - 9;
+        if (Character.isUpperCase(item)) {
+            priority += 26;
+        }
+        return priority;
     }
 }
