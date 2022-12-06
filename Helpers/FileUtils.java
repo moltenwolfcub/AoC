@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class FileUtils {
     public static List<String> readLines(String fileName) {
@@ -26,5 +27,13 @@ public class FileUtils {
         }
         
         return lines;
+    }
+    public static List<Character> readChars(String fileName) {
+        List<String> lines = readLines(fileName);
+        List<Character> chars = new ArrayList<>();
+        for (String line : lines) {
+            chars.addAll(line.chars().mapToObj(i -> (char)i).collect(Collectors.toList()));
+        }
+        return chars;
     }
 }
