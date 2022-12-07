@@ -36,4 +36,20 @@ public class FileUtils {
         }
         return chars;
     }
+
+	public static String removeLastDir(String inputDir) {
+		String[] splitDirs = inputDir.split("/");
+		String returnVal = "";
+		for (int i = 1; i < splitDirs.length-1; i++) {
+			returnVal = returnVal.concat("/");
+			returnVal = returnVal.concat(splitDirs[i]);
+		}
+
+		if (returnVal != "/") {
+			returnVal = returnVal.concat("/");
+		}
+
+		return returnVal;
+		
+	}
 }

@@ -1,19 +1,19 @@
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import Helpers.FileUtils;
 
-public class day7_1 {
+public class day7_2 {
 	private static Map<String, Map<String, Integer>> fileStructure;
 	private static Map<String, Integer> dirSizes;
-	private static Integer totalSize;
 
     public static void main(String[] args) {
 		fileStructure = new HashMap<>();
 		dirSizes = new HashMap<>();
-		totalSize = 0;
 
-		//read in file structure
+		//region: read in file structure
         String currentDir = "/";
         for (String terminalLine : FileUtils.readLines("2022/day7.txt")) {
 			String[] fullCommand = terminalLine.split(" ");
@@ -35,8 +35,9 @@ public class day7_1 {
 				}
             }
         }
+        //endregion
 
-		//calculate directory totals sizes
+		//region: calculate directory totals sizes
 		for (String directory : fileStructure.keySet()) {
 			Map<String, Integer> files = fileStructure.get(directory);
 			for (String file : files.keySet()) {
@@ -53,15 +54,29 @@ public class day7_1 {
 				}
 			}
 		}
+        //endregion
 
-		//sum all the dirs that are less than or equal to 100,000 in size
-		for (Integer fileSize : dirSizes.values()) {
-			if (fileSize <= 100000) {
-				totalSize += fileSize;
-			}
-		}
+		//region: find the space required
+        Integer totalUsed = dirSizes.get("/");
+        Integer totalFree = 70000000 - totalUsed;
+        Integer spaceReq = 30000000 - totalFree;
+        //endregion
 
-		System.out.println(totalSize);
+        //region: locate smallest file that's big enough
+        Map<String, Integer> orderedDirSizes = dirSizes.entrySet().stream()
+            .sorted(Map.Entry.comparingByValue())
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+
+        Integer smallestDirSize = 0;
+        for (Map.Entry<String, Integer> dir : orderedDirSizes.entrySet()) {
+            if (dir.getValue() >= spaceReq) {
+                smallestDirSize = dir.getValue();
+                break;
+            }
+        }
+        //endregion
+
+		System.out.println(smallestDirSize);
     }
 
 	private static String handleDirChange(String startingDir, String directoryParam) {
@@ -80,5 +95,5 @@ public class day7_1 {
 		}
 		return returnVal;
 	}
-
+    
 }
