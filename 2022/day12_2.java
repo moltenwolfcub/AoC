@@ -6,10 +6,10 @@ import java.util.NoSuchElementException;
 import Helpers.FileUtils;
 import Helpers.Position2D;
 
-public class day12_1 {
+public class day12_2 {
     private static HeightGrid heightmap;
-    private static Position2D startPos;
     private static Position2D endPos;
+    private static Integer shortestDistance;
     
     public static void main(String[] args) {
         heightmap = new HeightGrid();
@@ -28,7 +28,6 @@ public class day12_1 {
                 switch (readValue) {
                     case 'S':
                         height = 1;
-                        startPos = new Position2D(currentX, currentY);
                         break;
                     case 'E':
                         height = 26;
@@ -48,7 +47,16 @@ public class day12_1 {
                 currentList = new ArrayList<>();
             }
         }
-        System.out.println(shortestPath(heightmap.getTile(startPos.x, startPos.y)));
+
+        shortestDistance = Integer.MAX_VALUE;
+        for (HeightTile tile : heightmap) {
+            if(tile.height!=1) {
+                continue;
+            }
+            shortestDistance = Math.min(shortestDistance, shortestPath(tile));
+            heightmap.resetVisited();
+        }
+        System.out.println(shortestDistance);
     }
 
     private static Integer shortestPath(HeightTile origin) {
@@ -74,13 +82,10 @@ public class day12_1 {
             current.addAll(next);
             next = new ArrayList<>();
         }
-        
-        System.out.println("No path found");
-        return 0;
+        return Integer.MAX_VALUE;
     }
 
     private static void debugHeightMap() {
-        System.out.println("StartPos: "+startPos);
         System.out.println("EndPos: "+endPos);
         for (HeightTile tile : heightmap) {
             System.out.println(tile);
@@ -111,6 +116,10 @@ public class day12_1 {
 
         public boolean visited() {
             return getDistanceFromStart()>-1;
+        }
+
+        public void resetVisited() {
+            distanceFromStart = -1;
         }
 
         public List<HeightTile> getPossibleMoves(HeightGrid grid) {
@@ -160,6 +169,10 @@ public class day12_1 {
             }
         }
 
+        public void resetVisited() {
+            forEach(t -> t.resetVisited());
+        }
+
 
         @Override
         public Iterator<HeightTile> iterator() {
@@ -182,7 +195,7 @@ public class day12_1 {
 
             @Override
             public boolean hasNext() {
-                return cursor != size;
+                return cursor < size;
             }
 
             @Override
