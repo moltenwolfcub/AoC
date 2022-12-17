@@ -1,39 +1,46 @@
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import Helpers.FileUtils;
 
-public class day13_1 {
-    private static List<PacketItem> packets;
-    private static Integer decoderKey;
+public class day13_2 {
+    private static Integer correctPacketIdSum;
     
     public static void main(String[] args) {
-        packets = new ArrayList<>();
-        decoderKey = 0;
+        correctPacketIdSum = 0;
 
-        for (String packet : FileUtils.readLines("2022/day13.txt")) {
+        PacketItem otherPacket = null;
+        Integer packetPairHalf = 0;
+        Integer pairId = 0;
+        for (String packet : FileUtils.readLines("2022/day13tmp.txt")) {
             List<Character> inputChars = packet.chars().mapToObj(i -> (char)i).collect(Collectors.toList());
             if (inputChars.size() == 0) {
+                packetPairHalf = 0;
                 continue;
             }
 
             inputChars.remove(0);
-            packets.add(parseList(inputChars));
+            PacketItem parsedPacket = parseList(inputChars);
+
+            if (packetPairHalf == 0) {
+                otherPacket = parsedPacket;
+                packetPairHalf++;
+                continue;
+            }
+            if (packetPairHalf != 1) {
+                throw new IndexOutOfBoundsException("PacketHalf wasn't 1 or 0 and there wasn't an empty line.");
+            }
+
+            pairId++;
+            if (parsedPacket.compareTo(otherPacket)>0) {
+                correctPacketIdSum+=pairId;
+            }
+            otherPacket = null;
+            parsedPacket = null;
         }
-        PacketItem divider1 = new PacketItem(List.of(new PacketItem(List.of(new PacketItem(2)))));
-        PacketItem divider2 = new PacketItem(List.of(new PacketItem(List.of(new PacketItem(6)))));
-        packets.add(divider1);
-        packets.add(divider2);
-        Collections.sort(packets);
-
-        Integer divider1Id = packets.indexOf(divider1)+1;
-        Integer divider2Id = packets.indexOf(divider2)+1;
-        decoderKey = divider1Id * divider2Id;
-
-        System.out.println(decoderKey);
+        System.out.println(correctPacketIdSum);
     }
 
 
