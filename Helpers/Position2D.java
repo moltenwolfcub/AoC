@@ -14,6 +14,14 @@ public class Position2D implements Cloneable {
         this.y = y;
     }
 
+    public Integer distanceFromManhattan(Position2D otherPos) {
+        Integer xDif = Math.abs(otherPos.x-this.x);
+        Integer yDif = Math.abs(otherPos.y-this.y);
+        Integer totalDif = xDif+yDif;
+        return totalDif;
+    }
+
+
     @Override
     public Position2D clone() {
         return new Position2D(x, y);
