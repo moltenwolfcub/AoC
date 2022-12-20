@@ -51,7 +51,7 @@ public class Position2D implements Cloneable {
         }
         if (other instanceof Position2D) {
             Position2D pos = (Position2D) other;
-            return pos.x.equals(this.x) && pos.y.equals(this.y);
+            return pos.hashCode() == this.hashCode();
         }
         return false;
     }
