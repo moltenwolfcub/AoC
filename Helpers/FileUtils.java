@@ -36,6 +36,17 @@ public class FileUtils {
         }
         return chars;
     }
+    public static List<String> splitCSV(String input) {
+        String str = input.strip();
+        String[] split = str.split(",");
+
+        List<String> splitList = new ArrayList<>();
+        for (String splitValues : split) {
+            splitValues = splitValues.strip();
+            splitList.add(splitValues);
+        }
+        return splitList;
+    }
 
 	public static String removeLastDir(String inputDir) {
 		String[] splitDirs = inputDir.split("/");
