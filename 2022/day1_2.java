@@ -3,7 +3,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import Helpers.FileUtils;
+import helpers.FileUtils;
 
 public class day1_2 {
     private static List<String> elfCalorieData;

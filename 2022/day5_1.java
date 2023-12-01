@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import Helpers.FileUtils;
+import helpers.FileUtils;
 
 public class day5_1 {
     private static List<String> file;

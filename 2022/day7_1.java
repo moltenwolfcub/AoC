@@ -1,7 +1,7 @@
 import java.util.HashMap;
 import java.util.Map;
 
-import Helpers.FileUtils;
+import helpers.FileUtils;
 
 public class day7_1 {
 	private static Map<String, Map<String, Integer>> fileStructure;

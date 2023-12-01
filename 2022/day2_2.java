@@ -1,4 +1,4 @@
-import Helpers.FileUtils;
+import helpers.FileUtils;
 
 public class day2_2 {
 	private static int runningScore;

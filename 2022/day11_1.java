@@ -3,7 +3,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
-import Helpers.FileUtils;
+import helpers.FileUtils;
 
 public class day11_1 {
     private static List<Monkey> monkeys;

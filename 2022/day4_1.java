@@ -1,7 +1,7 @@
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
-import Helpers.FileUtils;
+import helpers.FileUtils;
 
 public class day4_1 {
     private static Integer runningTotal;

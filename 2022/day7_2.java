@@ -3,7 +3,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import Helpers.FileUtils;
+import helpers.FileUtils;
 
 public class day7_2 {
 	private static Map<String, Map<String, Integer>> fileStructure;

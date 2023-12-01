@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import Helpers.Axis;
-import Helpers.FileUtils;
-import Helpers.Position2D;
+import helpers.Axis;
+import helpers.FileUtils;
+import helpers.Position2D;
 
 public class day14_1 {
     private static Map<Position2D, Boolean> solidityMap;

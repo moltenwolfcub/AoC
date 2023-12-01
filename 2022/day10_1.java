@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 import java.util.List;
 
-import Helpers.FileUtils;
+import helpers.FileUtils;
 
 public class day10_1 {
     private static Integer xRegister;

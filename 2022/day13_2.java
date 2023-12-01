@@ -3,7 +3,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import Helpers.FileUtils;
+import helpers.FileUtils;
 
 public class day13_2 {
     private static Integer correctPacketIdSum;

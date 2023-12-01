@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import Helpers.FileUtils;
+import helpers.FileUtils;
 
 public class day10_2 {
     private static Integer xRegister;

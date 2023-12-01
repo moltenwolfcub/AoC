@@ -5,8 +5,8 @@ import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import Helpers.FileUtils;
-import Helpers.Position2D;
+import helpers.FileUtils;
+import helpers.Position2D;
 
 public class day15_2 {
     private static List<Sensor> sensors;

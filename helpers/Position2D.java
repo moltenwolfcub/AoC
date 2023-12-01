@@ -1,4 +1,4 @@
-package Helpers;
+package helpers;
 
 public class Position2D implements Cloneable {
     public Integer x;

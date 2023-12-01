@@ -2,8 +2,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import Helpers.FileUtils;
-import Helpers.Position2D;
+import helpers.FileUtils;
+import helpers.Position2D;
 
 public class day9_1 {
 	private static Position2D head;

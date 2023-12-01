@@ -2,7 +2,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import Helpers.FileUtils;
+import helpers.FileUtils;
 
 public class day6_2 {
     private static List<Character> dataStream;

@@ -3,8 +3,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import Helpers.FileUtils;
-import Helpers.Position2D;
+import helpers.FileUtils;
+import helpers.Position2D;
 
 public class day12_2 {
     private static HeightGrid heightmap;

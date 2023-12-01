@@ -7,7 +7,7 @@ import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import Helpers.FileUtils;
+import helpers.FileUtils;
 
 public class day16_1 {
     private static Map<String, Valve> valves;
