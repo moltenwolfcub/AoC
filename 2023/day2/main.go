@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"regexp"
 	"strings"
 
@@ -10,11 +11,9 @@ import (
 
 func main() {
 	input := helpers.ReadLines("input.txt")
-	fmt.Println(part1(input))
-}
 
-func part1(input []string) string {
 	runningTotal := 0
+	runingPower := 0
 
 	regex := regexp.MustCompile(`\d+`)
 
@@ -24,6 +23,7 @@ func part1(input []string) string {
 		}
 
 		possible := true
+		miniumNeeded := cubeHandful{}
 
 		gameData := strings.Split(game, ":")[1]
 		handfuls := strings.Split(gameData, ";")
@@ -37,27 +37,31 @@ func part1(input []string) string {
 
 				if strings.Contains(cube, "red") {
 					handful.red = num
+					miniumNeeded.red = int(math.Max(float64(miniumNeeded.red), float64(num)))
 					continue
 				}
 				if strings.Contains(cube, "green") {
 					handful.green = num
+					miniumNeeded.green = int(math.Max(float64(miniumNeeded.green), float64(num)))
 					continue
 				}
 				if strings.Contains(cube, "blue") {
 					handful.blue = num
+					miniumNeeded.blue = int(math.Max(float64(miniumNeeded.blue), float64(num)))
 					continue
 				}
 			}
 			if !handful.isPossible() {
 				possible = false
-				break
 			}
 		}
 		if possible {
 			runningTotal += gameId + 1
 		}
+		runingPower += miniumNeeded.calcPower()
 	}
-	return fmt.Sprintf("%d", runningTotal)
+	fmt.Printf("Part 1: %d\n", runningTotal)
+	fmt.Printf("Part 2: %d\n", runingPower)
 }
 
 type cubeHandful struct {
@@ -68,4 +72,8 @@ type cubeHandful struct {
 
 func (c cubeHandful) isPossible() bool {
 	return c.red <= 12 && c.green <= 13 && c.blue <= 14
+}
+
+func (c cubeHandful) calcPower() int {
+	return c.red * c.green * c.blue
 }
