@@ -59,7 +59,8 @@ func main() {
 				continue
 			}
 			found := Symbol{
-				pos: image.Pt(x, y),
+				pos:    image.Pt(x, y),
+				isGear: c == '*',
 			}
 
 			symbols = append(symbols, found)
@@ -78,19 +79,25 @@ func main() {
 	}
 
 	sum := 0
-	for _, num := range numbers {
-		isPartNum := false
-		for _, symbol := range symbols {
+	gearRatios := 0
+	for _, symbol := range symbols {
+		isPartNum := 0
+		touching := 0
+		ratio := 1
+		for _, num := range numbers {
 			if num.touching(symbol.pos) {
-				isPartNum = true
-				break
+				isPartNum += num.value
+				touching++
+				ratio *= num.value
 			}
 		}
-		if isPartNum {
-			sum += num.value
+		if touching >= 2 {
+			gearRatios += ratio
 		}
+		sum += isPartNum
 	}
-	fmt.Println(sum)
+	fmt.Printf("Part 1: %d\n", sum)
+	fmt.Printf("Part 2: %d\n", gearRatios)
 }
 
 type Number struct {
@@ -108,5 +115,6 @@ func (n Number) touching(pt image.Point) bool {
 }
 
 type Symbol struct {
-	pos image.Point
+	pos    image.Point
+	isGear bool
 }
