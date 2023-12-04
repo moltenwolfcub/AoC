@@ -13,8 +13,9 @@ func main() {
 	lines := helpers.ReadLines("input.txt")
 
 	worth := 0
+	cards := map[int]scratchCard{}
 
-	for _, line := range lines {
+	for lineNum, line := range lines {
 		if line == "" {
 			continue
 		}
@@ -50,9 +51,34 @@ func main() {
 
 		cardWorth := math.Pow(2, float64(wins-1))
 		worth += int(cardWorth)
+
+		cards[lineNum+1] = scratchCard{
+			value: wins,
+			index: lineNum + 1,
+		}
+	}
+	fmt.Printf("Part 1: %d\n", worth)
+
+	cardsToProcess := []scratchCard{}
+	for _, v := range cards {
+		cardsToProcess = append(cardsToProcess, v)
 	}
 
-	fmt.Printf("Part 1: %d\n", worth)
+	allCards := cardsToProcess
+	for len(cardsToProcess) > 0 {
+		current := cardsToProcess[0]
+
+		if current.value > 0 {
+
+			for i := current.index + 1; i <= current.index+current.value; i++ {
+				cardsToProcess = append(cardsToProcess, cards[i])
+				allCards = append(allCards, cards[i])
+			}
+		}
+
+		cardsToProcess = cardsToProcess[1:]
+	}
+	fmt.Printf("Part 2: %d\n", len(allCards))
 }
 
 func intersection(a []int, b []int) []int {
@@ -63,4 +89,9 @@ func intersection(a []int, b []int) []int {
 		}
 	}
 	return ret
+}
+
+type scratchCard struct {
+	index int
+	value int
 }
