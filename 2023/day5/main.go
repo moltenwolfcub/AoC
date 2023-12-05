@@ -47,22 +47,21 @@ func main() {
 		}
 		propertyMaps[inputSeg-1] = append(propertyMaps[inputSeg-1], lineMapping)
 	}
+	fmt.Printf("Part 1: %v\n", part1(seeds, propertyMaps))
+}
+
+func part1(seeds []int, Maps [][]mapping) int {
 
 	locations := []int{}
 	for _, seed := range seeds {
 		oldProp := seed
-		for _, propertyMap := range propertyMaps {
-			newProp := getValue(propertyMap, oldProp)
-			if newProp < 0 {
-				panic("Couldn't map property")
-			}
-
-			oldProp = newProp
+		for _, propertyMap := range Maps {
+			oldProp = getValue(propertyMap, oldProp)
 		}
 		locations = append(locations, oldProp)
 	}
 	slices.Sort(locations)
-	fmt.Printf("Part 1: %v\n", locations[0])
+	return locations[0]
 }
 
 func getValue(propertyMap []mapping, key int) int {
