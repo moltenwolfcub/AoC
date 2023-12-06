@@ -17,25 +17,21 @@ func main() {
 		panic("Failed to parse data. Lists weren't same length")
 	}
 
-	total := 1
-	for i := 0; i < len(times); i++ {
-		time := times[i]
-		record := records[i]
+	fmt.Printf("Part 1: %d\n", part1(times, records))
 
-		margin := 0
-		for i := 1; i < time; i++ {
-			speed := i
-			duration := time - i
-			distTravelled := speed * duration
-
-			if distTravelled > record {
-				margin++
-			}
-		}
-		total *= margin
+	strTime := ""
+	for _, i := range times {
+		strTime += fmt.Sprintf("%d", i)
 	}
+	time := helpers.MustAtoi(strTime)
 
-	fmt.Printf("Part 1: %d\n", total)
+	strRecord := ""
+	for _, i := range records {
+		strRecord += fmt.Sprintf("%d", i)
+	}
+	record := helpers.MustAtoi(strRecord)
+
+	fmt.Printf("Part 2: %d\n", part2(time, record))
 }
 
 func parseData(data string) []int {
@@ -54,4 +50,41 @@ func parseData(data string) []int {
 	}
 
 	return finalData
+}
+
+func part1(times []int, records []int) int {
+	total := 1
+	for i := 0; i < len(times); i++ {
+		time := times[i]
+		record := records[i]
+
+		margin := 0
+		for i := 1; i < time; i++ {
+			speed := i
+			duration := time - i
+			distTravelled := speed * duration
+
+			if distTravelled > record {
+				margin++
+			}
+		}
+		total *= margin
+	}
+	return total
+}
+
+func part2(time int, record int) int {
+
+	margin := 0
+	for i := 1; i < time; i++ {
+		speed := i
+		duration := time - i
+		distTravelled := speed * duration
+
+		if distTravelled > record {
+			margin++
+		}
+	}
+
+	return margin
 }
