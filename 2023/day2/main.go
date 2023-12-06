@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"math"
 	"regexp"
 	"strings"
 
@@ -37,17 +36,17 @@ func main() {
 
 				if strings.Contains(cube, "red") {
 					handful.red = num
-					miniumNeeded.red = int(math.Max(float64(miniumNeeded.red), float64(num)))
+					miniumNeeded.red = helpers.IntMax(miniumNeeded.red, num)
 					continue
 				}
 				if strings.Contains(cube, "green") {
 					handful.green = num
-					miniumNeeded.green = int(math.Max(float64(miniumNeeded.green), float64(num)))
+					miniumNeeded.green = helpers.IntMax(miniumNeeded.green, num)
 					continue
 				}
 				if strings.Contains(cube, "blue") {
 					handful.blue = num
-					miniumNeeded.blue = int(math.Max(float64(miniumNeeded.blue), float64(num)))
+					miniumNeeded.blue = helpers.IntMax(miniumNeeded.blue, num)
 					continue
 				}
 			}

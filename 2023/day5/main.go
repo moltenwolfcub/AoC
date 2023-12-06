@@ -122,7 +122,7 @@ func part2(seedRanges []seedRange, Maps [][]mapping) int {
 	minLoc := math.MaxInt
 
 	for _, loc := range allLocs {
-		minLoc = int(math.Min(float64(minLoc), float64(loc.start)))
+		minLoc = helpers.IntMin(minLoc, loc.start)
 	}
 
 	return minLoc
