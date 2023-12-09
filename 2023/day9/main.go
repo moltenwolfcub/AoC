@@ -10,7 +10,8 @@ import (
 func main() {
 	input := helpers.ReadLines("input.txt")
 
-	total := 0
+	totalNext := 0
+	totalPrev := 0
 
 	for _, line := range input {
 		if line == "" {
@@ -23,6 +24,7 @@ func main() {
 		}
 
 		subSeqLast := []int{}
+		subSeqFirst := []int{}
 
 		for {
 			zero := true
@@ -37,6 +39,7 @@ func main() {
 			}
 
 			subSeqLast = append(subSeqLast, sequence[len(sequence)-1])
+			subSeqFirst = append(subSeqFirst, sequence[0])
 
 			sequence = findNextSubSeq(sequence)
 		}
@@ -46,10 +49,19 @@ func main() {
 			next += i
 		}
 
-		total += next
+		totalNext += next
+
+		prev := subSeqFirst[len(subSeqFirst)-1]
+		for i := len(subSeqFirst) - 2; i >= 0; i-- {
+			subSeqFirst[i] -= prev
+			prev = subSeqFirst[i]
+		}
+
+		totalPrev += prev
 	}
 
-	fmt.Printf("Part 1: %d\n", total)
+	fmt.Printf("Part 1: %d\n", totalNext)
+	fmt.Printf("Part 2: %d\n", totalPrev)
 }
 
 func findNextSubSeq(seq []int) []int {
