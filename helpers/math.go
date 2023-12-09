@@ -19,6 +19,10 @@ func IntMax(a int, b int) int {
 func LCM(nums ...int) int {
 	lcm := 1
 	for _, num := range nums {
+		if num == 0 {
+			panic("can't find LCM of zero")
+		}
+
 		lcm = lcm * num / GCD(lcm, num)
 	}
 	return lcm
