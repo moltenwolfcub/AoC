@@ -68,34 +68,69 @@ func main() {
 		pos:   originalStart.pos,
 		tType: typeFromNeighbours(startNeighbours),
 	}
-
 	checked := []image.Point{}
-	current := []tile{start}
-	next := []tile{}
+	{
+		current := []tile{start}
+		next := []tile{}
 
-	stepsAway := 0
+		stepsAway := 0
 
-	for len(current) > 0 {
-		for _, n := range current[0].getNeighbours() {
-			if slices.Contains(checked, n) {
-				continue
+		for len(current) > 0 {
+			for _, n := range current[0].getNeighbours() {
+				if slices.Contains(checked, n) {
+					continue
+				}
+				next = append(next, grid[n.Y][n.X])
 			}
-			next = append(next, grid[n.Y][n.X])
+
+			checked = append(checked, current[0].pos)
+			current = current[1:]
+			if len(current) == 0 {
+				if len(next) == 0 {
+					break
+				}
+				stepsAway++
+				current = next
+				next = []tile{}
+			}
 		}
 
-		checked = append(checked, current[0].pos)
-		current = current[1:]
-		if len(current) == 0 {
-			if len(next) == 0 {
-				break
+		fmt.Printf("Part 1: %d\n", stepsAway)
+	}
+
+	notLoop := []tile{}
+
+	for y, l := range grid {
+		for x, t := range l {
+			if !slices.Contains(checked, t.pos) {
+				grid[y][x].tType = ground
+				notLoop = append(notLoop, grid[y][x])
 			}
-			stepsAway++
-			current = next
-			next = []tile{}
 		}
 	}
 
-	fmt.Printf("Part 1: %d\n", stepsAway)
+	// for each ground count how many | J L there are to the left
+	// odd = in; even = out
+	total := 0
+	for _, t := range notLoop {
+		toLeft := 0
+		currentPos := t.pos
+
+		for {
+			currentPos = currentPos.Sub(image.Point{1, 0})
+			if currentPos.X < 0 {
+				break
+			}
+			currentTileType := grid[currentPos.Y][currentPos.X].tType
+			if currentTileType == vertical || currentTileType == neBend || currentTileType == nwBend {
+				toLeft++
+			}
+		}
+		if toLeft%2 == 1 {
+			total++
+		}
+	}
+	fmt.Printf("Part 2: %d\n", total)
 }
 
 type tile struct {
@@ -132,6 +167,15 @@ func (t tile) getNeighbours() []image.Point {
 	}
 
 	return ret
+}
+
+func (t tile) getAdjacent() []image.Point {
+	return []image.Point{
+		t.pos.Add(image.Pt(0, -1)),
+		t.pos.Add(image.Pt(0, 1)),
+		t.pos.Add(image.Pt(-1, 0)),
+		t.pos.Add(image.Pt(1, 0)),
+	}
 }
 
 type tileType int
