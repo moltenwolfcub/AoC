@@ -16,6 +16,14 @@ func IntMax(a int, b int) int {
 	}
 }
 
+func IntAbs(a int) int {
+	if a >= 0 {
+		return a
+	} else {
+		return -a
+	}
+}
+
 func LCM(nums ...int) int {
 	lcm := 1
 	for _, num := range nums {
