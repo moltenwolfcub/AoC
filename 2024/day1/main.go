@@ -26,6 +26,12 @@ func main() {
 	slices.Sort(left)
 	slices.Sort(right)
 
+	fmt.Printf("Part 1: %v\n", part1(left, right))
+	fmt.Printf("Part 2: %v\n", part2(left, right))
+}
+
+func part1(left, right []int) int {
+
 	total := 0
 
 	for i := 0; i < len(left); i++ {
@@ -36,5 +42,41 @@ func main() {
 
 		total += diff
 	}
-	fmt.Println(total)
+	return total
+}
+
+func part2(left, right []int) int {
+	total := 0
+	lastLeft := -1
+	lastValue := -1
+
+	for _, l := range left {
+		if l == lastLeft {
+			total += lastValue
+			continue
+		}
+
+		similarity := 0
+
+		redunant := 0
+
+		for _, r := range right {
+			if r < l {
+				redunant++
+				continue
+			}
+			if r == l {
+				similarity++
+				continue
+			}
+			break
+		}
+		right = right[similarity+redunant:]
+
+		lastLeft = l
+		lastValue = l * similarity
+		total += lastValue
+	}
+
+	return total
 }
