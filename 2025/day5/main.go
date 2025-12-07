@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 
 	"github.com/moltenwolfcub/AoC/helpers"
@@ -78,6 +79,10 @@ func part1(freshRanges []IdRange, availableIngredients []int) int {
 }
 
 func part2(freshRanges []IdRange) int {
+	sort.Slice(freshRanges, func(i, j int) bool {
+		return freshRanges[i].begin < freshRanges[j].begin
+	})
+
 	mergedRanges := []IdRange{}
 
 	for _, r := range freshRanges {
