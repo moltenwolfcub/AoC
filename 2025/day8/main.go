@@ -19,8 +19,8 @@ type JunctionBox struct {
 	Circuit *Circuit
 }
 
-func (v JunctionBox) Dist(o JunctionBox) float64 {
-	return math.Sqrt(float64((v.X-o.X)*(v.X-o.X) + (v.Y-o.Y)*(v.Y-o.Y) + (v.Z-o.Z)*(v.Z-o.Z)))
+func (v JunctionBox) SquareDist(o JunctionBox) int {
+	return (v.X-o.X)*(v.X-o.X) + (v.Y-o.Y)*(v.Y-o.Y) + (v.Z-o.Z)*(v.Z-o.Z)
 }
 
 type Circuit struct {
@@ -139,7 +139,7 @@ func ShortestDist(boxes []*JunctionBox, completedConnections map[[2]*JunctionBox
 	emptyTests := 0
 
 loop:
-	least := math.Inf(1)
+	least := math.MaxInt
 	leastPair := [2]*JunctionBox{}
 	for i := 0; i < len(boxes); i++ {
 		first := boxes[i]
@@ -154,7 +154,7 @@ loop:
 				}
 			}
 
-			d := first.Dist(*second)
+			d := first.SquareDist(*second)
 			if d < least {
 				least = d
 				leastPair[0] = first
