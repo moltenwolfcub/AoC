@@ -138,9 +138,13 @@ func part2(input []string) int {
 func ShortestDist(boxes []*JunctionBox, completedConnections map[[2]*JunctionBox]bool) ([2]*JunctionBox, int, map[[2]*JunctionBox]bool) {
 	emptyTests := 0
 
-loop:
+	// loop:
 	least := math.MaxInt
 	leastPair := [2]*JunctionBox{}
+
+	emptyLeasts := make([]int, 0)
+	emptyPairs := make([][2]*JunctionBox, 0)
+
 	for i := 0; i < len(boxes); i++ {
 		first := boxes[i]
 
@@ -156,16 +160,22 @@ loop:
 
 			d := first.SquareDist(*second)
 			if d < least {
+				if first.Circuit == second.Circuit && first.Circuit != nil {
+					emptyLeasts = append(emptyLeasts, d)
+					emptyPairs = append(emptyPairs, [2]*JunctionBox{first, second})
+					continue
+				}
 				least = d
 				leastPair[0] = first
 				leastPair[1] = second
 			}
 		}
 	}
-	if leastPair[0].Circuit == leastPair[1].Circuit && leastPair[0].Circuit != nil {
-		completedConnections[leastPair] = true
-		emptyTests++
-		goto loop
+	for i, empty := range emptyLeasts {
+		if empty < least {
+			emptyTests++
+			completedConnections[emptyPairs[i]] = true
+		}
 	}
 	completedConnections[leastPair] = true
 	return leastPair, emptyTests, completedConnections
