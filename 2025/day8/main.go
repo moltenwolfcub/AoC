@@ -40,7 +40,6 @@ func (c Circuit) Merge(o Circuit) *Circuit {
 
 func main() {
 	input := helpers.ReadLines("input.txt")
-	const maxConnection int = 1000
 
 	boxes := make([]*JunctionBox, len(input)-1)
 	circuits := make([]*Circuit, len(input)-1)
@@ -63,8 +62,17 @@ func main() {
 		boxes[i] = box
 	}
 
+	fmt.Printf("Part 1: %v\n", part1(boxes, circuits))
+	fmt.Printf("Part 2: %v\n", part2(input))
+}
+
+func part1(boxes []*JunctionBox, circuits []*Circuit) int {
+	const maxConnection int = 1000
+	var completedConnections [][2]*JunctionBox = make([][2]*JunctionBox, 0)
+
 	for z := 0; z < maxConnection; z++ {
-		closest, empties := ShortestDist(boxes)
+		closest, empties, newConns := ShortestDist(boxes, completedConnections)
+		completedConnections = newConns
 
 		z += empties
 		if z >= maxConnection {
@@ -100,10 +108,14 @@ func main() {
 
 	product := len(circuits[0].Boxes) * len(circuits[1].Boxes) * len(circuits[2].Boxes)
 
-	fmt.Println(product)
+	return product
 }
 
-func ShortestDist(boxes []*JunctionBox) ([2]*JunctionBox, int) {
+func part2(input []string) int {
+	return 0
+}
+
+func ShortestDist(boxes []*JunctionBox, completedConnections [][2]*JunctionBox) ([2]*JunctionBox, int, [][2]*JunctionBox) {
 	emptyTests := 0
 
 loop:
@@ -136,7 +148,5 @@ loop:
 		goto loop
 	}
 	completedConnections = append(completedConnections, leastPair)
-	return leastPair, emptyTests
+	return leastPair, emptyTests, completedConnections
 }
-
-var completedConnections [][2]*JunctionBox = make([][2]*JunctionBox, 0)
