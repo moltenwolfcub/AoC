@@ -3,3 +3,6 @@
 # Don't commit puzzle inputs
 
 input.txt
+
+profiler/
+build/
