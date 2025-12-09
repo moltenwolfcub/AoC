@@ -83,7 +83,29 @@ func main() {
 	}
 
 	fmt.Printf("Part 1: %v\n", part1(boxes, circuits))
-	fmt.Printf("Part 2: %v\n", part2(input))
+
+	boxes = make([]*JunctionBox, len(input)-1)
+	circuits = make([]*Circuit, len(input)-1)
+	for i, line := range input {
+		if line == "" {
+			continue
+		}
+
+		c := &Circuit{}
+		circuits[i] = c
+
+		coords := strings.Split(line, ",")
+		box := &JunctionBox{
+			helpers.MustAtoi(coords[0]),
+			helpers.MustAtoi(coords[1]),
+			helpers.MustAtoi(coords[2]),
+			c,
+		}
+		c.Boxes = append(c.Boxes, box)
+		boxes[i] = box
+	}
+
+	fmt.Printf("Part 2: %v\n", part2(boxes, circuits))
 }
 
 func part1(boxes []*JunctionBox, circuits []*Circuit) int {
@@ -131,8 +153,41 @@ func part1(boxes []*JunctionBox, circuits []*Circuit) int {
 	return product
 }
 
-func part2(input []string) int {
-	return 0
+func part2(boxes []*JunctionBox, circuits []*Circuit) int {
+	var completedConnections map[[2]*JunctionBox]bool = make(map[[2]*JunctionBox]bool, 0)
+
+	lastConnection := [2]*JunctionBox{}
+	for len(circuits) > 1 {
+		closest, _, newConns := ShortestDist(boxes, completedConnections)
+		completedConnections = newConns
+		lastConnection = closest
+
+		// remove previous 2 circuits
+		toRemove := -1
+		for i, c := range circuits {
+			if c == closest[0].Circuit {
+				toRemove = i
+				break
+			}
+		}
+		circuits = append(circuits[:toRemove], circuits[toRemove+1:]...)
+		toRemove = -1
+		for i, c := range circuits {
+			if c == closest[1].Circuit {
+				toRemove = i
+				break
+			}
+		}
+		circuits = append(circuits[:toRemove], circuits[toRemove+1:]...)
+
+		// merge new circuits
+		newCircuit := closest[0].Circuit.Merge(*closest[1].Circuit)
+		circuits = append(circuits, newCircuit)
+	}
+
+	product := lastConnection[0].X * lastConnection[1].X
+
+	return product
 }
 
 func ShortestDist(boxes []*JunctionBox, completedConnections map[[2]*JunctionBox]bool) ([2]*JunctionBox, int, map[[2]*JunctionBox]bool) {
