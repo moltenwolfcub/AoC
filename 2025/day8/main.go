@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"math"
-	"slices"
 	"sort"
 	"strings"
 
@@ -68,7 +67,7 @@ func main() {
 
 func part1(boxes []*JunctionBox, circuits []*Circuit) int {
 	const maxConnection int = 1000
-	var completedConnections [][2]*JunctionBox = make([][2]*JunctionBox, 0)
+	var completedConnections map[[2]*JunctionBox]bool = make(map[[2]*JunctionBox]bool, 0)
 
 	for z := 0; z < maxConnection; z++ {
 		closest, empties, newConns := ShortestDist(boxes, completedConnections)
@@ -115,7 +114,7 @@ func part2(input []string) int {
 	return 0
 }
 
-func ShortestDist(boxes []*JunctionBox, completedConnections [][2]*JunctionBox) ([2]*JunctionBox, int, [][2]*JunctionBox) {
+func ShortestDist(boxes []*JunctionBox, completedConnections map[[2]*JunctionBox]bool) ([2]*JunctionBox, int, map[[2]*JunctionBox]bool) {
 	emptyTests := 0
 
 loop:
@@ -129,7 +128,7 @@ loop:
 
 			if first.Circuit == second.Circuit && first.Circuit != nil {
 				completed := [2]*JunctionBox{first, second}
-				if slices.Contains(completedConnections, completed) {
+				if _, ok := completedConnections[completed]; ok {
 					continue
 				}
 			}
@@ -143,10 +142,10 @@ loop:
 		}
 	}
 	if leastPair[0].Circuit == leastPair[1].Circuit && leastPair[0].Circuit != nil {
-		completedConnections = append(completedConnections, leastPair)
+		completedConnections[leastPair] = true
 		emptyTests++
 		goto loop
 	}
-	completedConnections = append(completedConnections, leastPair)
+	completedConnections[leastPair] = true
 	return leastPair, emptyTests, completedConnections
 }
