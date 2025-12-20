@@ -37,10 +37,17 @@ func (b Button) String() string {
 }
 
 func main() {
-	input := helpers.ReadLines("input.txt")
+	input := helpers.ReadLines("example2.txt")
 
-	targetRe := regexp.MustCompile(`\[([\.|#]+)\]`)
-	buttonRe := regexp.MustCompile(`\(((?:\d,?)+)\)`)
+	fmt.Printf("Part 1: %v\n", part1(input))
+	fmt.Printf("Part 2: %v\n", part2(input))
+}
+
+var targetRe = regexp.MustCompile(`\[([\.|#]+)\]`)
+var buttonRe = regexp.MustCompile(`\(((?:\d,?)+)\)`)
+
+func part1(input []string) int {
+	return 0 //TEMP just for time efficiency while writing part 2
 
 	runningTotal := 0
 	for _, line := range input {
@@ -67,7 +74,7 @@ func main() {
 		sol := findSolution(target, buttons)
 		runningTotal += sol
 	}
-	fmt.Println(runningTotal)
+	return runningTotal
 }
 
 func findSolution(target LightArray, buttons []Button) int {
