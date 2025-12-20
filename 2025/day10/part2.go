@@ -130,6 +130,9 @@ func part2(input []string) int {
 		fmt.Println(es)
 		ReduceSystem(es)
 		fmt.Println(es)
+		sol := SolveSystem(es)
+		fmt.Println(es)
+		fmt.Println(sol)
 	}
 
 	return 0
@@ -147,7 +150,8 @@ func ReduceSystem(es *EquationSystem) {
 				}
 			}
 			if rowWithValue == -1 {
-				panic("Not implemented for all values below being zero")
+				continue
+				// panic("Not implemented for all values below being zero")
 				/*
 					I think if this occurs then the input has no possible solution
 					so this should never actually occur as long as im using valid
@@ -177,4 +181,34 @@ func ReduceSystem(es *EquationSystem) {
 			es.AddEquationRows(es.equations[i], scaledEq, i)
 		}
 	}
+}
+
+func SolveSystem(es *EquationSystem) []int {
+	solution := make([]int, es.numButtons)
+
+	for diagonal := es.numJoltages - 1; diagonal >= 0; diagonal-- {
+		dVal := es.equations[diagonal][diagonal]
+		if dVal == 0 {
+			solution[diagonal] = 0
+			continue
+		}
+
+		c := es.equations[diagonal][es.numButtons]
+
+		if float64(c)/float64(dVal) != float64(c/dVal) {
+			panic("Doesn't yield integer solution")
+		}
+
+		presses := c / dVal
+		solution[diagonal] = presses
+
+		for row := diagonal - 1; row >= 0; row-- {
+			coefficient := es.equations[row][diagonal]
+
+			v := coefficient * presses
+			es.equations[row][es.numButtons] -= v
+		}
+	}
+
+	return solution
 }
