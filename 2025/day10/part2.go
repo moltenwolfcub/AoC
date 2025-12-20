@@ -16,6 +16,14 @@ func (e Equation) Scale(sf int) {
 	}
 }
 
+func (e Equation) GetScaled(sf int) Equation {
+	eq := make(Equation, len(e))
+	for i, v := range e {
+		eq[i] = v * sf
+	}
+	return eq
+}
+
 type EquationSystem struct {
 	numJoltages int //how many equations we'll have
 	numButtons  int //how many variables will be in the equation
@@ -80,6 +88,15 @@ func (es *EquationSystem) AddRows(a, b, dest int) {
 	es.equations[dest] = sum
 }
 
+func (es *EquationSystem) AddEquationRows(a, b Equation, dest int) {
+	sum := make(Equation, len(a))
+	for i := range sum {
+		sum[i] = a[i] + b[i]
+	}
+
+	es.equations[dest] = sum
+}
+
 var joltageRe = regexp.MustCompile(`{((?:\d+,?)+)}`)
 
 func part2(input []string) int {
@@ -111,13 +128,53 @@ func part2(input []string) int {
 
 		es := NewEquationSystem(buttons, joltages)
 		fmt.Println(es)
-		es.SwapRows(0, 3)
-		es.SwapRows(0, 2)
-		es.ScaleRow(2, -1)
-		es.AddRows(0, 2, 2)
-		es.AddRows(1, 2, 2)
+		ReduceSystem(es)
 		fmt.Println(es)
 	}
 
 	return 0
+}
+
+func ReduceSystem(es *EquationSystem) {
+	for diagonal := 0; diagonal < es.numJoltages; diagonal++ {
+		rowWithValue := -1
+		// make diagonal non-zero
+		if es.equations[diagonal][diagonal] == 0 {
+			for i := diagonal + 1; i < es.numJoltages; i++ {
+				if es.equations[i][diagonal] != 0 {
+					rowWithValue = i
+					break
+				}
+			}
+			if rowWithValue == -1 {
+				panic("Not implemented for all values below being zero")
+				/*
+					I think if this occurs then the input has no possible solution
+					so this should never actually occur as long as im using valid
+					inputs
+				*/
+			}
+			es.SwapRows(diagonal, rowWithValue)
+		} else {
+			rowWithValue = diagonal
+		}
+		if es.equations[diagonal][diagonal] < 0 {
+			es.ScaleRow(diagonal, -1)
+		}
+
+		// make every other value zero
+		for i := rowWithValue + 1; i < es.numJoltages; i++ {
+			currentVal := es.equations[i][diagonal]
+			if currentVal == 0 {
+				continue
+			}
+
+			lcm := helpers.LCM(currentVal, es.equations[diagonal][diagonal])
+			es.ScaleRow(i, lcm/currentVal)
+
+			sf := -1 * (lcm / es.equations[diagonal][diagonal])
+			scaledEq := es.equations[diagonal].GetScaled(sf)
+			es.AddEquationRows(es.equations[i], scaledEq, i)
+		}
+	}
 }
