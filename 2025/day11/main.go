@@ -18,7 +18,6 @@ func main() {
 
 	network := make(map[string]*Node, 0)
 
-	var start *Node
 	for _, line := range input {
 		if line == "" {
 			continue
@@ -47,35 +46,65 @@ func main() {
 
 			item.children = append(item.children, childNode)
 		}
-
-		if thisLabel == "you" {
-			if start != nil {
-				panic("Found multiple yous")
-			}
-			start = item
-		}
 	}
 
-	paths := Search(start, make([]*Node, 0))
+	paths1 := Search1(network["you"], make([]*Node, 0))
+	fmt.Printf("Part 1: %v\n", paths1)
 
-	fmt.Println(paths)
+	paths2 := Search2(network["svr"], make([]*Node, 0), network)
+	fmt.Printf("Part 2: %v\n", paths2)
 }
 
-func Search(currentNode *Node, alreadyVisited []*Node) int {
+func Search1(currentNode *Node, alreadyVisited []*Node) int {
 	if currentNode.label == "out" {
 		return 1
 	}
 
 	total := 0
 
-	newVisited := append(append(make([]*Node, len(alreadyVisited)), alreadyVisited...), currentNode)
+	newVisited := append(append(make([]*Node, 0), alreadyVisited...), currentNode)
 	for _, child := range currentNode.children {
 		if slices.Contains(alreadyVisited, child) {
 			continue
 		}
 
-		paths := Search(child, newVisited)
+		paths := Search1(child, newVisited)
 		total += paths
 	}
 	return total
+}
+
+func Search2(currentNode *Node, alreadyVisited []*Node, network map[string]*Node) int {
+	PrintVisited(alreadyVisited)
+
+	if currentNode.label == "out" {
+		if slices.Contains(alreadyVisited, network["dac"]) && slices.Contains(alreadyVisited, network["fft"]) {
+			return 1
+		}
+		return 0
+	}
+
+	total := 0
+
+	newVisited := append(append(make([]*Node, 0), alreadyVisited...), currentNode)
+	for _, child := range currentNode.children {
+		if slices.Contains(alreadyVisited, child) {
+			continue
+		}
+
+		paths := Search2(child, newVisited, network)
+		total += paths
+	}
+	return total
+}
+
+func PrintVisited(visited []*Node) {
+	str := ""
+
+	for _, v := range visited {
+		str += v.label
+		str += " "
+	}
+
+	fmt.Println(str)
 }
