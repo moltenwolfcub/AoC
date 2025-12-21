@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"regexp"
 	"strings"
 
@@ -127,11 +128,17 @@ func part2(input []string) int {
 		}
 
 		es := NewEquationSystem(buttons, joltages)
-		fmt.Println(es)
+		// fmt.Println(es)
 		ReduceSystem(es)
-		fmt.Println(es)
-		sol := SolveSystem(es)
-		fmt.Println(es)
+		// fmt.Println(es)
+		// sol := SolveSystem(es)
+		sol := make([]int, es.numButtons)
+		for i := range sol {
+			sol[i] = -1
+		}
+		minPresses := math.MaxInt
+		SolveSystemRecursive(*es, min(len(sol)-1, len(es.equations)-1), sol, &minPresses)
+		// fmt.Println(es)
 		fmt.Println(sol)
 	}
 
@@ -215,4 +222,31 @@ func SolveSystem(es *EquationSystem) []int {
 	}
 
 	return solution
+}
+
+func SolveSystemRecursive(es EquationSystem, rowToSolve int, partialSolution []int, minPresses *int) {
+	if rowToSolve == -1 {
+		sum := 0
+		for _, v := range partialSolution {
+			sum += v
+		}
+
+		*minPresses = min(*minPresses, sum)
+		return
+	}
+
+	if es.equations[rowToSolve][rowToSolve] <= 0 {
+		panic("diagonal wasn't positive")
+	}
+
+	rowTargetSum := es.equations[rowToSolve][es.numButtons]
+	for known := rowToSolve + 1; known < len(partialSolution); known++ {
+		rowTargetSum -= es.equations[rowToSolve][known] * partialSolution[known]
+	}
+
+	if rowTargetSum%es.equations[rowToSolve][rowToSolve] != 0 {
+		panic("Doesn't yield integer solution")
+	}
+	partialSolution[rowToSolve] = rowTargetSum / es.equations[rowToSolve][rowToSolve]
+	SolveSystemRecursive(es, rowToSolve-1, partialSolution, minPresses)
 }
