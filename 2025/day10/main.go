@@ -37,7 +37,7 @@ func (b Button) String() string {
 }
 
 func main() {
-	input := helpers.ReadLines("example2.txt")
+	input := helpers.ReadLines("input.txt")
 
 	fmt.Printf("Part 1: %v\n", part1(input))
 	fmt.Printf("Part 2: %v\n", part2(input))
@@ -47,8 +47,6 @@ var targetRe = regexp.MustCompile(`\[([\.|#]+)\]`)
 var buttonRe = regexp.MustCompile(`\(((?:\d,?)+)\)`)
 
 func part1(input []string) int {
-	return 0 //TEMP just for time efficiency while writing part 2
-
 	runningTotal := 0
 	for _, line := range input {
 		if line == "" {

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 	"regexp"
+	"slices"
 	"strings"
 
 	"github.com/moltenwolfcub/AoC/helpers"
@@ -101,6 +102,7 @@ func (es *EquationSystem) AddEquationRows(a, b Equation, dest int) {
 var joltageRe = regexp.MustCompile(`{((?:\d+,?)+)}`)
 
 func part2(input []string) int {
+	runningTotal := 0
 
 	for _, line := range input {
 		if line == "" {
@@ -128,21 +130,34 @@ func part2(input []string) int {
 		}
 
 		es := NewEquationSystem(buttons, joltages)
-		// fmt.Println(es)
 		ReduceSystem(es)
-		// fmt.Println(es)
-		// sol := SolveSystem(es)
+
+		constraints := make([]int, es.numButtons)
+		for i := range constraints {
+			constraints[i] = math.MaxInt
+		}
+
+		for button := 0; button < es.numButtons; button++ {
+			for _, connection := range buttons[button] {
+				constraints[button] = min(constraints[button], joltages[connection])
+			}
+		}
+
 		sol := make([]int, es.numButtons)
 		for i := range sol {
 			sol[i] = -1
 		}
 		minPresses := math.MaxInt
-		SolveSystemRecursive(*es, min(len(sol)-1, len(es.equations)-1), sol, &minPresses)
-		// fmt.Println(es)
-		fmt.Println(sol)
+		SolveSystemRecursive(buttons, joltages, *es, min(len(sol)-1, len(es.equations)-1), len(sol)-1, constraints, sol, &minPresses)
+
+		if minPresses >= math.MaxInt {
+			panic("AHHHHHHH")
+		}
+
+		runningTotal += minPresses
 	}
 
-	return 0
+	return runningTotal
 }
 
 func ReduceSystem(es *EquationSystem) {
@@ -160,12 +175,7 @@ func ReduceSystem(es *EquationSystem) {
 			}
 			if rowWithValue == -1 {
 				continue
-				// panic("Not implemented for all values below being zero")
-				/*
-					I think if this occurs then the input has no possible solution
-					so this should never actually occur as long as im using valid
-					inputs
-				*/
+				// if it and every value below is zero then this column is already reduced
 			}
 			es.SwapRows(diagonal, rowWithValue)
 		} else {
@@ -224,29 +234,57 @@ func SolveSystem(es *EquationSystem) []int {
 	return solution
 }
 
-func SolveSystemRecursive(es EquationSystem, rowToSolve int, partialSolution []int, minPresses *int) {
+func SolveSystemRecursive(buttons [][]int, joltages []int, es EquationSystem, rowToSolve int, nextUnknown int, constraints []int, partialSolution []int, minPresses *int) {
 	if rowToSolve == -1 {
-		sum := 0
-		for _, v := range partialSolution {
-			sum += v
+		thisJolts := make([]int, len(joltages))
+		for button := range buttons {
+			for _, connection := range buttons[button] {
+				thisJolts[connection] += partialSolution[button]
+			}
 		}
 
-		*minPresses = min(*minPresses, sum)
+		if slices.Equal(thisJolts, joltages) {
+			sum := 0
+			for _, v := range partialSolution {
+				sum += v
+			}
+
+			*minPresses = min(*minPresses, sum)
+		}
 		return
 	}
 
-	if es.equations[rowToSolve][rowToSolve] <= 0 {
-		panic("diagonal wasn't positive")
+	if nextUnknown > rowToSolve {
+		for guess := 0; guess <= constraints[nextUnknown]; guess++ {
+			partialSolution[nextUnknown] = guess
+			SolveSystemRecursive(buttons, joltages, es, rowToSolve, nextUnknown-1, constraints, partialSolution, minPresses)
+		}
+		return
+	}
+
+	if rowToSolve != nextUnknown {
+		panic("assert false")
+	}
+	if es.equations[rowToSolve][nextUnknown] == 0 {
+		for guess := 0; guess <= constraints[nextUnknown]; guess++ {
+			partialSolution[nextUnknown] = guess
+			SolveSystemRecursive(buttons, joltages, es, rowToSolve-1, nextUnknown-1, constraints, partialSolution, minPresses)
+		}
+		return
 	}
 
 	rowTargetSum := es.equations[rowToSolve][es.numButtons]
-	for known := rowToSolve + 1; known < len(partialSolution); known++ {
+	for known := nextUnknown + 1; known < len(partialSolution); known++ {
 		rowTargetSum -= es.equations[rowToSolve][known] * partialSolution[known]
 	}
 
 	if rowTargetSum%es.equations[rowToSolve][rowToSolve] != 0 {
-		panic("Doesn't yield integer solution")
+		return //non integer solution
 	}
-	partialSolution[rowToSolve] = rowTargetSum / es.equations[rowToSolve][rowToSolve]
-	SolveSystemRecursive(es, rowToSolve-1, partialSolution, minPresses)
+	possibleSol := rowTargetSum / es.equations[rowToSolve][rowToSolve]
+	if possibleSol < 0 {
+		return
+	}
+	partialSolution[nextUnknown] = possibleSol
+	SolveSystemRecursive(buttons, joltages, es, rowToSolve-1, nextUnknown-1, constraints, partialSolution, minPresses)
 }
