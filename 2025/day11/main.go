@@ -48,15 +48,37 @@ func main() {
 		}
 	}
 
-	paths1 := Search1(network["you"], make([]*Node, 0))
+	paths1 := Search1(network["you"], make([]*Node, 0), "out")
 	fmt.Printf("Part 1: %v\n", paths1)
 
-	paths2 := Search2(network["svr"], make([]*Node, 0), network)
+	fft_out := Search1(network["fft"], make([]*Node, 0), "out")
+	dac_out := Search1(network["dac"], make([]*Node, 0), "out")
+	dac_fft := Search1(network["dac"], make([]*Node, 0), "fft")
+	fft_dac := Search1(network["fft"], make([]*Node, 0), "dac")
+
+	fromKeyNodes := -1
+	toKey := -1
+
+	if dac_fft != 0 && fft_dac != 0 {
+		panic("cyclic graph")
+	}
+	if dac_fft > 0 {
+		fromKeyNodes = dac_fft * fft_out
+		toKey = Search1(network["svr"], make([]*Node, 0), "dac")
+	}
+	if fft_dac > 0 {
+		fromKeyNodes = fft_dac * dac_out
+		toKey = Search1(network["svr"], make([]*Node, 0), "fft")
+	}
+	paths2 := toKey * fromKeyNodes
+
 	fmt.Printf("Part 2: %v\n", paths2)
 }
 
-func Search1(currentNode *Node, alreadyVisited []*Node) int {
-	if currentNode.label == "out" {
+var search1Cache map[string]int = make(map[string]int)
+
+func Search1(currentNode *Node, alreadyVisited []*Node, target string) int {
+	if currentNode.label == target {
 		return 1
 	}
 
@@ -68,43 +90,14 @@ func Search1(currentNode *Node, alreadyVisited []*Node) int {
 			continue
 		}
 
-		paths := Search1(child, newVisited)
+		key := child.label + target
+		paths, ok := search1Cache[key]
+		if !ok {
+			paths = Search1(child, newVisited, target)
+			search1Cache[key] = paths
+		}
+
 		total += paths
 	}
 	return total
-}
-
-func Search2(currentNode *Node, alreadyVisited []*Node, network map[string]*Node) int {
-	PrintVisited(alreadyVisited)
-
-	if currentNode.label == "out" {
-		if slices.Contains(alreadyVisited, network["dac"]) && slices.Contains(alreadyVisited, network["fft"]) {
-			return 1
-		}
-		return 0
-	}
-
-	total := 0
-
-	newVisited := append(append(make([]*Node, 0), alreadyVisited...), currentNode)
-	for _, child := range currentNode.children {
-		if slices.Contains(alreadyVisited, child) {
-			continue
-		}
-
-		paths := Search2(child, newVisited, network)
-		total += paths
-	}
-	return total
-}
-
-func PrintVisited(visited []*Node) {
-	str := ""
-
-	for _, v := range visited {
-		str += v.label
-		str += " "
-	}
-
-	fmt.Println(str)
 }
