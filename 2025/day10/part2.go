@@ -139,7 +139,9 @@ func part2(input []string) int {
 }
 
 func ReduceSystem(es *EquationSystem) {
-	for diagonal := 0; diagonal < es.numJoltages; diagonal++ {
+	diagonalLen := min(es.numJoltages, es.numButtons)
+
+	for diagonal := 0; diagonal < diagonalLen; diagonal++ {
 		rowWithValue := -1
 		// make diagonal non-zero
 		if es.equations[diagonal][diagonal] == 0 {
@@ -186,7 +188,9 @@ func ReduceSystem(es *EquationSystem) {
 func SolveSystem(es *EquationSystem) []int {
 	solution := make([]int, es.numButtons)
 
-	for diagonal := es.numJoltages - 1; diagonal >= 0; diagonal-- {
+	diagonalLen := min(es.numJoltages, es.numButtons)
+
+	for diagonal := diagonalLen - 1; diagonal >= 0; diagonal-- {
 		dVal := es.equations[diagonal][diagonal]
 		if dVal == 0 {
 			solution[diagonal] = 0
